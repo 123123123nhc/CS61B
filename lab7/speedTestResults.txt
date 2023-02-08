@@ -1,0 +1,10 @@
+Insert Random Speed Test:
+String length, String number, ULLMap, BSTMap, TreeMap, HashMap:
+1:  5, 10000, 0.13, 0.01, 0.00, 0.00
+2:  5, 100000, overflow, 0.05, 0.04, 0.01
+3:  5, 1000000, overflow, 1.10, 0.58, 0.21
+4.  10, 10000, 0.14, 0.01, 0.01, 0.00
+5.  10, 100000, overflow, 0.06, 0.05, 0.02
+6.  10, 1000000, overflow, 1.15, 0.68, 0.29
+7.  1000, 1000, 0.001, 0.001, 0.001, 0.001
+
