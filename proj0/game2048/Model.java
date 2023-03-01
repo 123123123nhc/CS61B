@@ -1,11 +1,10 @@
 package game2048;
 
-import java.util.Formatter;
-import java.util.Observable;
+import java.util.*;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author Haocheng Ni
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -114,11 +113,61 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
+        board.setViewingPerspective(side);
+        changed = moveUp();
+        board.setViewingPerspective(Side.NORTH);
+
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
+    }
+    public boolean moveUp(){
+        boolean moved = false;
+        for (int col = 0; col < board.size(); col++){
+            if (columnMoveUp(col, board.size()-1)){
+                moved = true;
+            }
+        }
+        return moved;
+    }
+
+    public boolean columnMoveUp (int col, int row){
+        if (row == 0){
+            return false;
+        }
+        int rowDown = row-1;
+        Tile tileUp = board.tile(col,row);
+        Tile tileDown = board.tile(col,rowDown);
+        while (tileDown == null & rowDown >= 0){
+            if (rowDown == 0){
+                return false;
+            }
+            rowDown --;
+            tileDown = board.tile(col,rowDown);
+        }
+
+        if (tileUp == null){
+            board.move(col,row,tileDown);
+            columnMoveUp(col,row);
+            return true;
+        }
+        else if(tileUp.value() == tileDown.value()){
+            board.move(col,row,tileDown);
+            score += tileDown.value() * 2;
+            columnMoveUp(col,row-1);
+            return true;
+        }
+        else if(rowDown != row - 1){
+            board.move(col,row-1,tileDown);
+            columnMoveUp(col,row-1);
+            return true;
+        }
+        else{
+            columnMoveUp(col,row-1);
+            return false;
+        }
     }
 
     /** Checks if the game is over and sets the gameOver variable
@@ -138,6 +187,11 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        Iterator<Tile> iterator= b.iterator();
+        while (iterator.hasNext()){
+            Tile currentTile = iterator.next();
+            if (currentTile == null) return true;
+        }
         return false;
     }
 
@@ -148,6 +202,13 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        Iterator<Tile> iterator= b.iterator();
+        while (iterator.hasNext()){
+            Tile currentTile = iterator.next();
+            if (currentTile!= null) {
+                if (currentTile.value() == MAX_PIECE) return true;
+            }
+        }
         return false;
     }
 
@@ -159,9 +220,36 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        if (emptySpaceExists(b)) return true;
+        Iterator<Tile> iterator = b.iterator();
+        while(iterator.hasNext()){
+            Tile currentTile = iterator.next();
+            for (Tile adjacentTile : adjacentTiles(currentTile,b)){
+                if (currentTile.value() == adjacentTile.value()) return true;
+            }
+        }
         return false;
     }
 
+    private static List<Tile> adjacentTiles(Tile tile, Board b){
+        List<Tile> tiles = new ArrayList<>();
+        for (int[] coordinate : adjacentCoordinates(tile,b)){
+            tiles.add(b.tile(coordinate[0],coordinate[1]));
+        }
+        return tiles;
+    }
+
+    private static List<int[]> adjacentCoordinates(Tile tile, Board b){
+        List<int[]> coordinates = new ArrayList<>();
+        int[][] possibleCoordiantes = new int[][] {{tile.col(),tile.row()-1},{tile.col(),tile.row()+1},
+                {tile.col()+1,tile.row()},{tile.col()-1,tile.row()}};
+        for (int[] coordinate : possibleCoordiantes){
+            if (coordinate[0] >= 0 && coordinate[0] < b.size() && coordinate[1] >= 0 && coordinate[1] < b.size()){
+                coordinates.add(coordinate);
+            }
+        }
+        return coordinates;
+    }
 
     @Override
      /** Returns the model as a string, used for debugging. */
