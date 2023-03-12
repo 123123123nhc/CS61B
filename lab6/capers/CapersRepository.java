@@ -1,10 +1,14 @@
 package capers;
 
 import java.io.File;
+import java.io.IOException;
+
+import static capers.Dog.DOG_FOLDER;
+import static capers.Dog.fromFile;
 import static capers.Utils.*;
 
 /** A repository for Capers 
- * @author TODO
+ * @author Haocheng Ni
  * The structure of a Capers Repository is as follows:
  *
  * .capers/ -- top level folder for all persistent data in your lab12 folder
@@ -18,7 +22,8 @@ public class CapersRepository {
     static final File CWD = new File(System.getProperty("user.dir"));
 
     /** Main metadata folder. */
-    static final File CAPERS_FOLDER = null; // TODO Hint: look at the `join`
+    static final File CAPERS_FOLDER = join(CWD,".capers");
+    static final File STORY_FOLDER = join(".capers","story");
                                             //      function in Utils
 
     /**
@@ -31,7 +36,10 @@ public class CapersRepository {
      *    - story -- file containing the current story
      */
     public static void setupPersistence() {
-        // TODO
+        CAPERS_FOLDER.mkdir();
+        DOG_FOLDER.mkdir();
+        STORY_FOLDER.mkdir();
+
     }
 
     /**
@@ -41,6 +49,10 @@ public class CapersRepository {
      */
     public static void writeStory(String text) {
         // TODO
+        String lastStory = readContentsAsString(STORY_FOLDER);
+        writeContents(STORY_FOLDER, lastStory, text, "\n");
+        String newStory = readContentsAsString(STORY_FOLDER);
+        System.out.println(newStory);
     }
 
     /**
@@ -48,8 +60,10 @@ public class CapersRepository {
      * three non-command arguments of args (name, breed, age).
      * Also prints out the dog's information using toString().
      */
-    public static void makeDog(String name, String breed, int age) {
-        // TODO
+    public static void makeDog(String name, String breed, int age){
+        Dog dog = new Dog(name, breed, age);
+        dog.saveDog();
+        System.out.println(dog.toString());
     }
 
     /**
@@ -60,5 +74,8 @@ public class CapersRepository {
      */
     public static void celebrateBirthday(String name) {
         // TODO
+        Dog dog = fromFile(name);
+        dog.haveBirthday();
+
     }
 }

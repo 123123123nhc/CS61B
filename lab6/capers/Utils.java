@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
 
-
 /** Assorted utilities.
  *  @author P. N. Hilfinger
  */
@@ -125,8 +124,6 @@ class Utils {
             throw error("Internal error serializing commit.");
         }
     }
-
-
 
     /* MESSAGES AND ERROR REPORTING */
 
